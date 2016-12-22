@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Demo: communication</title>
+  <script type="text/javascript" src="../libs/browserassets.js"></script>
+  <script type="text/javascript" src="../libs/babel.js"></script>
+  <script type="text/javascript" src="../libs/prism.js"></script>
+  <script type="text/javascript" src="../libs/jquery.js"></script>
+  <script type="text/javascript" src="../libs/addsource.js"></script>
+  <link rel="stylesheet" href="../libs/prism.css">
+  <link rel="stylesheet" href="../libs/demo.css">
+  <link rel="stylesheet" href="../libs/all.css">
+  
+</head>
+<body>
+<div class='topbar'><div>Edument React course &nbsp;&nbsp;&nbsp;&nbsp;<a href='../index.html'>Home</a> - <a href='./index.html'>Demos</a> - <span>communication</span></div></div>
+<div class="wrapper">
+
+<div id="container"></div>
+
+<script type="text/babel">
+
+var pt = React.PropTypes;
+
+var AreYouSureButton = React.createClass({
+  propTypes: {
+    confirmedSubmit: pt.func.isRequired,
+    enabled: pt.bool.isRequired
+  },
+  getInitialState: function(){
+    return {
+        confirming: false
+    };
+  },
+  componentWillReceiveProps: function(nextProps){
+    if (!nextProps.enabled){
+      this.setState({confirming: false});
+    }
+  },
+  maybe: function(){
+    this.setState({confirming: true});
+  },
+  noway: function(){
+    this.setState({confirming: false});
+  },
+  yesimsure: function(){
+    this.setState({confirming: false});
+    this.props.confirmedSubmit();
+  },
+  render: function(){
+    if (!this.state.confirming){
+      return <button disabled={!this.props.enabled} onClick={this.maybe}>Submit</button>;
+    }
+    return <span>
+      <button onClick={this.noway}>Cancel</button>
+      <button onClick={this.yesimsure}>Confirm</button>
+    </span>
+  }
+})
+
+var Parent = React.createClass({
+  updateField: function(e){
+    this.setState({field: e.target.value});
+  },
+  submitName: function(){
+    this.setState({
+      submittedName: this.state.field,
+      field: ''
+    });
+  },
+  getInitialState: function(){
+    return {
+      submittedName: "John Doe",
+      field: '' 
+    };
+  },
+  render: function(){
+    return <div>
+      <input onChange={this.updateField} value={this.state.field}></input>
+      <AreYouSureButton
+        confirmedSubmit={this.submitName}
+        enabled={this.state.field.length > 0}/>
+      Tweedledum
+      <br/>
+      <p>Submitted name: {this.state.submittedName}</p>
+    </div>;
+  }
+})
+
+
+ReactDOM.render(
+  <Parent/>,
+  document.getElementById("container")
+);
+
+</script>
+
+</div>
+<div id="sourcecode"></div>
+</body>
+</html>
